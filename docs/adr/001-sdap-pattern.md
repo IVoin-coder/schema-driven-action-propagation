@@ -39,30 +39,66 @@ Pass the data structure (schema) **together with the action itself**, rather tha
     "correlationId": "corr-789",
     "schemaHash": "sha256:abc123def456..."
   },
-   "schema": {
-    "//": "User action selection. All fields are optional, but at least one must be true.",
+  "schema": {
     "condition": {
       "toDraft": {
         "value": false,
         "type": "Boolean",
-        "required": false
+        "required": false,
+        "uiHint": "checkbox",
+        "label": "Send to Draft",
+        "description": "Return payment to draft status for additional review"
       },
       "toExecution": {
         "value": true,
-        "type": "Boolean",
-        "required": false
+        "type": "Boolean", 
+        "required": false,
+        "uiHint": "checkbox",
+        "label": "Approve for Execution",
+        "description": "Approve payment for immediate processing"
       },
       "toCancel": {
         "value": false,
         "type": "Boolean",
-        "required": false
+        "required": false,
+        "uiHint": "checkbox", 
+        "label": "Cancel Payment",
+        "description": "Cancel this payment request entirely"
       }
-    },    
-    "//": "User action description. Always required.",
+    },
     "description": {
-      "value": "Agreed and ready for implementation",
+      "value": "",
       "type": "String",
-      "required": true
+      "required": true,
+      "uiHint": "textarea",
+      "label": "Comments",
+      "description": "Provide additional details about your decision",
+      "placeholder": "Enter your comments here...",
+      "maxLength": 1000
+    },
+    "priority": {
+      "value": "",
+      "type": "Enum",
+      "required": false,
+      "uiHint": "select",
+      "label": "Priority Level",
+      "description": "Select the urgency level for this approval",
+      "options": [
+        {"value": "low", "label": "Low Priority"},
+        {"value": "medium", "label": "Medium Priority"}, 
+        {"value": "high", "label": "High Priority"},
+        {"value": "critical", "label": "Critical"}
+      ]
+    },
+    "attachments": {
+      "value": [],
+      "type": "Array",
+      "required": false,
+      "uiHint": "file-upload",
+      "label": "Supporting Documents",
+      "description": "Upload supporting documents (max 5 files)",
+      "maxItems": 5,
+      "allowedTypes": ["pdf", "jpg", "png", "doc", "docx"]
     }
   },
   "context": {

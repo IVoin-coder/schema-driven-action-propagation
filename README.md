@@ -10,6 +10,7 @@
 - [Problem Statement](#problem-statement)
 - [Terminology](#terminology)
 - [SDAP Specification](#sdap-specification)
+- [Basic Concepts](#basic-concepts)
 - [How SDAP Works](#how-sdap-works)
 - [Advantages](#advantages)
 - [Typical Use Case](#typical-use-case)
@@ -45,7 +46,60 @@ Rigid DTOs, OpenAPI contracts, and manual synchronization lead to:
 
 ## SDAP Specification
 
-**Schema-Driven Action Propagation (SDAP)** is an architectural approach designed for consistent and secure action propagation between loosely coupled components in a distributed system.
+**Schema-Driven Action Propagation (SDAP)** is an architectural approach that standardizes the way actions and data structures are described between services. The approach is technology-agnostic, does not require a dedicated infrastructure layer, and does not impose any orchestration or routing mechanisms. SDAP defines only the **form**, but not the **execution** of the logic.
+
+### What SDAP provides (Is)
+- A formal way to describe the structure of actions and data
+- A mechanism for loosely coupled interactions between services
+- An approach in which the schema version is determined by the hash of its contents
+- A model where different schema versions can coexist without migrations
+- A way to unify data and actions independent of business logic
+- A tool for predictable contract evolution without a centralized registry
+
+### What SDAP does not provide (Is Not)
+- SDAP is not a framework and does not include runtime components
+### SDAP does not require:
+- a schema registry (optional; useful for namespace management and field reuse)
+- a migration engine
+- an action propagation engine
+- specialized route monitoring
+- a message broker or middleware
+### SDAP does not define:
+- business logic for actions
+- execution routes
+- workflow mechanics
+- process orchestration
+
+## Basic Concepts
+
+### Versioning Model
+A schema version is determined by the hash of its contents. Any change to the data structure or action results in a new version. Old versions remain unchanged, which allows:
+- to avoid migrations
+- to ensure forward and backward compatibility
+- to process events from different versions in parallel
+
+### Actions
+Action is an **operation type identifier** described in the schema.
+
+Important: An Action does not contain business logic* and does not define how it is executed.
+
+Business logic, the response to an Action, and the order of execution of steps are entirely the responsibility
+of a specific system or service.
+
+SDAP defines the structure of Action input and output data, as well as the permissible
+state transitions, but does not describe the execution process.
+
+### Propagation
+Propagation in SDAP should be understood semantically, not as a runtime mechanic.
+
+SDAP does not handle orchestration or define a routing mechanism.
+The system itself decides:
+- how the action chain is constructed,
+- which services events are sent to,
+- which components are responsible for execution.
+
+SDAP only defines the format for describing steps and their data, ensuring
+loosely coupled integration.
 
 ### Goals and Objectives
 

@@ -335,12 +335,12 @@ This section tracks the documentation status for the SDAP pattern.
 | **Dynamic UI Generation** | Rendering user interfaces from declarative schemas | SDAP enables forms to be generated from action schemas |
 
 ### 🏗️ Related Architectural Patterns
-- **Event-Driven Architecture** - Foundation for asynchronous action propagation in SDAP
-- **CQRS (Command Query Responsibility Segregation)** - Can use SDAP for command validation and UI generation
-- **Process Orchestration** - BPMN/workflow engines can emit SDAP events for user tasks
-- **Schema Registry Pattern** - Centralized schema management that can complement SDAP implementations
-- **Self-Describing Messages** -  DDD and Event-Driven
-- **Backward/Forward compatibility** - At the level of each process instance
+- **[Event-Driven Architecture](https://martinfowler.com/articles/201701-event-driven.html)** — Foundation for asynchronous action propagation in SDAP
+- **[CQRS (Command Query Responsibility Segregation)](https://martinfowler.com/bliki/CQRS.html)** — Can use SDAP for command validation and UI generation
+- **[Process Orchestration](https://camunda.com/blog/2023/02/orchestration-vs-choreography/)** — BPMN/workflow engines can emit SDAP events for user tasks  
+- **[Schema Registry Pattern]()** — Centralized schema management that can complement SDAP implementations
+- **[Self-Describing Messages](https://dev.to/cadienvan/event-carried-state-transfer-a-pattern-for-distributed-data-management-in-event-driven-systems-165h)** — Core principle from DDD and Event-Driven architectures
+- **[Backward/Forward Compatibility](https://en.wikipedia.org/wiki/Forward_compatibility)** — Schema evolution techniques at the process instance level
     
 ## License
 

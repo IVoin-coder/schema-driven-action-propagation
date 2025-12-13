@@ -1,5 +1,4 @@
-# Use Case: Dynamic UI for Business Process Forms
-
+# Use Case: Schema-Driven Action Propagation (SDAP) for Dynamic UI in Business Processes
 ## Business Context
 A financial institution has multiple approval workflows (loan approval, invoice processing, compliance checks). Each workflow has forms that change quarterly due to regulatory updates.
 

@@ -1,4 +1,4 @@
-# Scenario 2: Backend Integration (Bidirectional Contracts) (Factory ↔ FRC)
+# Use Case: Backend Integration (Bidirectional Contracts) (Factory ↔ FRC)
 
 ## Business Context
 The roles of Producer (who defines the expected data schema) and Consumer (who fulfills it) in SDAP are flexible and contextual. They can be defined per interaction within a business process (e.g., Service A produces a request, Service B consumes it and then produces a response) or can be a fixed architectural characteristic of a system (e.g., a central reporting engine is designed primarily as a Consumer). This duality allows SDAP to model both dynamic, peer-to-peer workflows and stable, hub-and-spoke integrations.
@@ -16,9 +16,19 @@ The roles of Producer (who defines the expected data schema) and Consumer (who f
 | **Factory → FRC**<br>(Report Request) | **Factory** defines the report format and processing rules. | **FRC Service** generates a report matching the specification. | **`<reportSpecification>`** – A contract for the report's content, format, and delivery. |
 | **FRC → Factory**<br>(Data Request) | **FRC Service** defines the required raw data structure. | **Factory** provides data conforming to the specified structure. | **`<inputSpecification>`** – A contract for the data's types, fields, and validation rules. |
 
+### Architecture
+```mermaid
+graph LR
+    A[Factory] <-->|SDAP Events| B[FRC Service]
+    A --> C[Schema Registry]
+    B --> C
+    A --> D[Event Broker]
+    B --> D
+```
+
 ### Example: A Two-Phase SDAP Dialogue
 Consider a secure workflow where data exchange and report generation are separate, governed by SDAP contracts.
-
+z
 #### Phase 1: FRC Requests Data (FRC as Producer)
 
 ```xml

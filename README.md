@@ -1,6 +1,9 @@
 # Schema-Driven Action Propagation (SDAP)
+ schema-driven-action-propagation
 
 **SDAP** - Architectural pattern for loosely coupled action propagation through schemas in distributed systems.
+
+> **Core Idea:** Instead of relying on pre-shared, static data contracts (DTOs, APIs), SDAP lets the **producer send the exact data schema it needs right now**. The **consumer's job is to understand this schema and provide data that matches it.** This enables systems to evolve independently while maintaining perfect compatibility.
 
 > ⚠️ **Status**: Draft / Under Discussion  
 > 📢 **Seeking**: Architectural criticism and community review
@@ -11,6 +14,10 @@
 - [Terminology](#terminology)
 - [SDAP Specification](#sdap-specification)
 - [Basic Concepts](#basic-concepts)
+- [SDAP Event Format](#sdap-event-format)
+- [SDAP Integration Scenarios](#sdap-integration-scenarios)
+  - [Use Case: Schema-Driven Action Propagation (SDAP) for Dynamic UI in Business Processes](#use-case-schema-driven-action-propagation-sdap-for-dynamic-ui-in-business-processes)
+  - [Use Case: Backend Integration (Bidirectional Contracts) (Factory ↔ FRC)](#use-case-backend-integration-bidirectional-contracts-factory--frc)
 - [How SDAP Works](#how-sdap-works)
 - [Advantages](#advantages)
 - [Typical Use Case](#typical-use-case)
@@ -20,6 +27,7 @@
 - [When SDAP is Particularly Useful](#when-sdap-is-particularly-useful)
 - [Discussion](#discussion)
 - [Documentation](#documentation)
+- [Related Resources](#related-resources)
 - [License](#license)
 
 ## Problem Statement
@@ -57,7 +65,18 @@ Rigid DTOs, OpenAPI contracts, and manual synchronization lead to:
 - A tool for predictable contract evolution without a centralized registry
 
 ### What SDAP does not provide (Is Not)
-- SDAP is not a framework and does not include runtime components
+SDAP is not a universal solution. It is a specialized pattern focused on describing and propagating the shape of actions and their associated data schemas between loosely coupled components. It does not aim to replace or handle the following:
+
+- **Not a process orchestration engine** – SDAP does not enforce workflow rules, schedule tasks, or implement business logic. It only ensures that participants understand the expected data structure for each action.
+- **Not a replacement for stable APIs** – If processes and data structures are stable over long periods, SDAP may add unnecessary abstraction. It is intended for scenarios where flexibility and evolution are required.
+- **Not a dynamic rules engine** – Conditions in schemas are used for validation and structuring data (for generating UI forms, configuring external services, defining data pipelines, etc.), not for triggering actions or evaluating business logic.
+- **Not a UI framework** – While SDAP provides schemas that can be used for dynamic form generation, it does not mandate how forms are rendered, styled, or validated visually. Implementation of a UI renderer is optional.
+- **Not limited to JSON or frontend interactions** – The JSON example is illustrative. SDAP is serialization-agnostic and can work with Protobuf, Avro, XML, or any other format. It is equally applicable to backend-to-backend communication, IoT, or any distributed system component.
+- **Not dependent on a specific messaging system** – SDAP is messaging-agnostic and can work with Kafka, RabbitMQ, or other brokers. It does not require a central schema registry.
+- **Not a schema storage solution** – Schema versions exist for validation and backward compatibility. SDAP is not a database for historical analysis of schemas.
+- **Not a performance optimization tool** – SDAP focuses on decoupling and schema-driven propagation. It is not designed to improve throughput, latency, or memory usage.
+- **Not a handler of large binary payloads** – SDAP is suitable for lightweight action/event payloads. Large files or documents should be handled via dedicated storage mechanisms.
+  
 ### SDAP does not require:
 - a schema registry (optional; useful for namespace management and field reuse)
 - a migration engine
@@ -81,6 +100,8 @@ A schema version is determined by the hash of its contents. Any change to the da
 ### Actions
 Action is an **operation type identifier** described in the schema.
 
+**Schema as a universal descriptor:** While schemas can drive UI form generation, their primary role is to **formally describe data structures for any consumer** — whether it's a UI renderer, another microservice, an external system configuration, or a data pipeline. The schema defines "what" data is needed, not "who" will use it or "how".
+
 Important: An Action does not contain business logic* and does not define how it is executed.
 
 Business logic, the response to an Action, and the order of execution of steps are entirely the responsibility
@@ -90,9 +111,7 @@ SDAP defines the structure of Action input and output data, as well as the permi
 state transitions, but does not describe the execution process.
 
 ### Propagation
-Propagation in SDAP should be understood semantically, not as a runtime mechanic.
-
-SDAP does not handle orchestration or define a routing mechanism.
+Propagation in SDAP should be understood semantically, not as a runtime mechanic and does not handle orchestration or define a routing mechanism.
 The system itself decides:
 - how the action chain is constructed,
 - which services events are sent to,
@@ -112,87 +131,32 @@ SDAP solves the following problems:
 
 ### SDAP Event Format
 
-```json
-{
-  "metadata": {
-    "processId": "order-process-123",
-    "actionType": "APPROVE_PAYMENT",
-    "actionId": "action-456",
-    "timestamp": "2024-01-15T10:30:00Z",
-    "correlationId": "corr-789",
-    "schemaHash": "sha256:abc123def456..."
-  },
-  "schema": {
-    "condition": {
-      "toDraft": {
-        "value": false,
-        "type": "Boolean",
-        "required": false,
-        "uiHint": "checkbox",
-        "label": "Send to Draft",
-        "description": "Return payment to draft status for additional review"
-      },
-      "toExecution": {
-        "value": true,
-        "type": "Boolean", 
-        "required": false,
-        "uiHint": "checkbox",
-        "label": "Approve for Execution",
-        "description": "Approve payment for immediate processing"
-      },
-      "toCancel": {
-        "value": false,
-        "type": "Boolean",
-        "required": false,
-        "uiHint": "checkbox", 
-        "label": "Cancel Payment",
-        "description": "Cancel this payment request entirely"
-      }
-    },
-    "description": {
-      "value": "",
-      "type": "String",
-      "required": true,
-      "uiHint": "textarea",
-      "label": "Comments",
-      "description": "Provide additional details about your decision",
-      "placeholder": "Enter your comments here...",
-      "maxLength": 1000
-    },
-    "priority": {
-      "value": "",
-      "type": "Enum",
-      "required": false,
-      "uiHint": "select",
-      "label": "Priority Level",
-      "description": "Select the urgency level for this approval",
-      "options": [
-        {"value": "low", "label": "Low Priority"},
-        {"value": "medium", "label": "Medium Priority"}, 
-        {"value": "high", "label": "High Priority"},
-        {"value": "critical", "label": "Critical"}
-      ]
-    },
-    "attachments": {
-      "value": [],
-      "type": "Array",
-      "required": false,
-      "uiHint": "file-upload",
-      "label": "Supporting Documents",
-      "description": "Upload supporting documents (max 5 files)",
-      "maxItems": 5,
-      "allowedTypes": ["pdf", "jpg", "png", "doc", "docx"]
-    }
-  },
-  "context": {
-    "processName": "Order Processing",
-    "stepName": "Payment Confirmation",
-    "userId": "user-123",
-    "deadline": "2024-01-16T10:30:00Z"
-  }
-}
-```
-**Note:** schema can be null if the schemaHash is already known by the consumer.
+An SDAP event is a **self-contained message** that carries both the intent of an action and the formal description (`schema`) of the data required to execute it. This allows consumers to process the action independently, without needing prior knowledge of a fixed API contract.
+
+The format consists of three main parts:
+- **`metadata`**: Technical information about the event and the process.
+- **`schema`**: A declarative description of the data structure and user interface required to perform the action.
+- **`context`**: The business context in which the action takes place.
+
+**Important Note:** The `schema` field can be `null` if the recipient has already cached the schema using its `schemaHash`. This optimizes the event size during repeated communication.
+
+**Key `metadata` fields:**
+- **`actionType`**: The type of action (domain event) semantically describing a step in the business process (e.g., `APPROVE_PAYMENT`).
+- **`actionId`**: **A unique global identifier for this specific event instance**. Critical for duplicate detection (deduplication) by consumers.
+- **`correlationId`**: An identifier for tracing the entire business process (e.g., a single order), linking all related events.
+- **`schemaHash`**: **A hash fingerprint of the `schema` object's content**. Used for unambiguous schema version identification, caching, and data integrity verification.
+
+**Schema Evolution:** When modifying a schema, any additions or changes must maintain **backward compatibility**. It is recommended to add new fields as optional (`"required": false`) and never remove or fundamentally change the semantics of existing fields.
+
+## SDAP Integration Scenarios
+
+SDAP's flexibility allows it to be applied in different contexts, from user-facing interfaces to backend system integration.
+
+### Use Case: Schema-Driven Action Propagation (SDAP) for Dynamic UI in Business Processes
+See how [Use Case: Dynamic UI with SDAP](use-cases/01-dynamic-ui-integration.md) - How SDAP enables dynamic form generation without redeployment...
+
+### Use Case: Backend Integration (Bidirectional Contracts) (Factory ↔ FRC)
+Explore [factory-FRC integration with SDAP](use-cases/02-bidirectional-backend.md) for evolving contracts...
 
 ## How SDAP Works
 

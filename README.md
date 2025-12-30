@@ -27,6 +27,7 @@
 - [Discussion](#discussion)
 - [Documentation](#documentation)
 - [Related Resources](#related-resources)
+- [Security Version Scheme Distribution (SVSD)](#security-version-scheme-distribution-svsd)
 - [License](#license)
 
 ## Problem Statement
@@ -279,7 +280,12 @@ This section tracks the documentation status for the SDAP pattern.
 | **Schema Evolution** | Techniques for evolving data structures without breaking compatibility | SDAP supports multiple schema versions simultaneously |
 | **Dynamic UI Generation** | Rendering user interfaces from declarative schemas | SDAP enables forms to be generated from action schemas |
 
+### Security Version Scheme Distribution (SVSD)
+
+**[SVSD](https://github.com/IVoin-coder/security-version-scheme-distribution)** is an extension of the SDAP pattern that ensures deterministic, secure, and versioned delivery of action-schemas between producers and consumers in long-running processes. It preserves SDAP flexibility while eliminating risks of schema tampering, desynchronization, and unpredictable changes. 
+
 ### 🏗️ Related Architectural Patterns
+Repository: [https://github.com/IVoin-coder/security-version-scheme-distribution](https://github.com/IVoin-coder/security-version-scheme-distribution)
 - **[Event-Driven Architecture](https://martinfowler.com/articles/201701-event-driven.html)** — Foundation for asynchronous action propagation in SDAP
 - **[CQRS (Command Query Responsibility Segregation)](https://martinfowler.com/bliki/CQRS.html)** — Can use SDAP for command validation and UI generation
 - **[Process Orchestration](https://camunda.com/blog/2023/02/orchestration-vs-choreography/)** — BPMN/workflow engines can emit SDAP events for user tasks  

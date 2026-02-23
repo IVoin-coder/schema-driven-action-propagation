@@ -62,7 +62,7 @@ Notifier:
 - does not decide which notification channel to use
 - does not contain business conditions
 
-It:
+Billing:
 1. Receives the package
 2. Validates the structure
 3. Interprets action_propagation

@@ -1,6 +1,6 @@
 # Schema-Driven Action Propagation (SDAP)
 
-**SDAP** is an architectural discipline and a contract-based interaction model for Master–Follower systems, in which the set of admissible actions is deterministically computed from the process version and state, fixed as an immutable artifact, and strictly validated upon execution.
+**SDAP** is an architectural discipline a contract-based interaction model for Master–Follower systems, in which the set of admissible actions is deterministically computed from the process version and state, fixed as an immutable artifact, and strictly validated upon execution.
 
 > **Core Idea:** Coordination of interacting systems where the controlling system (Master) generates a schema of admissible actions and their requirements for the current process context, and the dependent system (Follower) interprets that schema and executes actions strictly within its boundaries.
 

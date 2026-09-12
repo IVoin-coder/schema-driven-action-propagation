@@ -102,7 +102,7 @@ A = F(ProcessVersion, State, Context, Capabilities)
 
 4. **Contract Persistence** - The schema is stored as a durable artifact.
 
-5. **No Cross-Version Compatibility** - Soft или parallel compatibility не допускаются.
+5. **No Cross-Version Compatibility** - Soft or parallel compatibility is not allowed.
 
 6. **Separation of Responsibility** - The Master governs the contract; the Follower interprets it.
 
